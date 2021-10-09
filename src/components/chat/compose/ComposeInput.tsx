@@ -56,7 +56,7 @@ function ComposeInput({ autoFocus = false, autoSize = false, className }: Props,
 
   const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = async (e) => {
     const value = e.target.value;
-    if (value.trim() === '' && !editFor) {
+    if (!editFor && (value.trim() === '' || (source === '' && value !== ''))) {
       updateMessageId(newId());
     }
     setSource(value);
