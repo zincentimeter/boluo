@@ -15,6 +15,7 @@ import {
 export const useInitializeCompose = (channelId: Id) => {
   const initialized = useAtomValue(initializedAtom, channelId);
   const chatInitialized = useSelector((state) => state.chatStates.get(channelId)?.initialized ?? false);
+  const myId = useSelector((state) => state.profile?.channels.get(channelId)?.member.userId);
   const callback = useAtomCallback(
     useCallback(
       (get, set) => {
@@ -27,7 +28,6 @@ export const useInitializeCompose = (channelId: Id) => {
         if (!(chatState && chatState.initialized)) {
           return;
         }
-        const myId = state.profile?.channels.get(channelId)?.member.userId;
         if (!myId) {
           return;
         }
@@ -55,7 +55,7 @@ export const useInitializeCompose = (channelId: Id) => {
         set(initializedAtom, true);
         return;
       },
-      [channelId, initialized, chatInitialized]
+      [initialized, chatInitialized, channelId, myId]
     ),
     channelId
   );
