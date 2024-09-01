@@ -53,7 +53,7 @@ export const NameEditable: FC<Props> = ({ name, inGame, color, member }) => {
     );
   }, [isOpen]);
 
-  const { refs, floatingStyles, context } = useFloating({
+  const { refs, floatingStyles, context, update } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: 'top-end',
@@ -61,6 +61,17 @@ export const NameEditable: FC<Props> = ({ name, inGame, color, member }) => {
     middleware: [flip({ mainAxis: true, crossAxis: false }), shift(), offset({ mainAxis: 0, crossAxis: 0 })],
     whileElementsMounted: autoUpdate,
   });
+
+  useEffect(() => {
+    if (!navigator.virtualKeyboard) return;
+    const listener = () => {
+      update();
+    };
+    navigator.virtualKeyboard.addEventListener('geometrychange', listener);
+    return () => {
+      navigator.virtualKeyboard?.removeEventListener('geometrychange', listener);
+    };
+  }, [update]);
 
   const click = useClick(context);
   const dismiss = useDismiss(context);

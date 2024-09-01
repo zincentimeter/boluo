@@ -1,4 +1,4 @@
-import { type FC, type MutableRefObject, type RefObject, useLayoutEffect, useRef } from 'react';
+import { type FC, type MutableRefObject, type RefObject, useEffect, useLayoutEffect, useRef } from 'react';
 import { type ListRange, type ScrollSeekPlaceholderProps, Virtuoso, type VirtuosoHandle } from 'react-virtuoso';
 import { type ChatItem } from '../../state/channel.types';
 import { ChatContentHeader } from './ChatContentHeader';
@@ -68,6 +68,12 @@ export const ChatContentVirtualList: FC<Props> = (props) => {
     setIsScrolling,
   } = props;
   const totalCount = chatList.length;
+
+  useEffect(() => {
+    const listener = () => virtuosoRef.current?.autoscrollToBottom();
+    navigator.virtualKeyboard?.addEventListener('geometrychange', listener);
+    return () => navigator.virtualKeyboard?.removeEventListener('geometrychange', listener);
+  }, [virtuosoRef]);
 
   let prevOffsetIndex = Number.MIN_SAFE_INTEGER;
   let prevItem: ChatItem | null = null;
